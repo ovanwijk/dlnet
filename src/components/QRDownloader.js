@@ -61,7 +61,7 @@ class QRDownloader extends Component {
         return <div style={{display:'flex', 
             alignItems:'center', alignContent:'center',
             justifyContent:'center', width:'100%', height:'100%'}}><Card>           
-              <CardTitle>Almost done!</CardTitle>
+              <CardTitle>Downloading QR Code</CardTitle>
               <CardBody style={{height:'300px'}}>
                 <QRCode id="qrcodeCanvas" 
                     value={this.state.data} 
