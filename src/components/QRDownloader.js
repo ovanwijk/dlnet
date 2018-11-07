@@ -12,7 +12,7 @@ class QRDownloader extends Component {
         super(props);
        this.state ={
            size: Number(props.match.params.size),
-           data: btoa(props.match.params.base64),
+           data: atob(props.match.params.base64),
            name:  props.match.params.name,
            stayopen: props.match.params.stayopen,
            downloaded: false
