@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
 import {
    
     Card,  CardText, CardBody, CardFooter,
-    CardTitle
+    CardHeader,Button
     } from 'reactstrap';
 import QRCode from 'qrcode.react';
 
@@ -58,21 +57,22 @@ class QRDownloader extends Component {
 
 
     render(){
-        return <div style={{display:'flex', 
+        return <div style={{display:'flex', textAlign:'center', 
             alignItems:'center', alignContent:'center',
-            justifyContent:'center', width:'100%', height:'100%'}}><Card>           
-              <CardTitle>Downloading QR Code</CardTitle>
-              <CardBody style={{height:'300px'}}>
+            justifyContent:'center', width:'100%', height:'100vh'}}><Card>           
+              <CardHeader>Downloading QR Code: {this.state.name}</CardHeader>
+              <CardBody>
                 <QRCode id="qrcodeCanvas" 
                     value={this.state.data} 
                     size={this.state.size} />
                 <CardText>
-                   {this.state.name}
+                    {this.state.data} 
 
                 </CardText>
                
               </CardBody>
               <CardFooter>
+                  <Button onClick={this.downloadQRCode.bind(this)}>Download</Button>
               </CardFooter>
             
         </Card>

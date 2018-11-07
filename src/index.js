@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { HashRouter, Switch, Route } from 'react-router-dom';
 import QRDownloader from './components/QRDownloader';
 
