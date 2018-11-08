@@ -76,10 +76,14 @@ class QRDownloader extends Component {
 }
 
 decryptQR(){
+    alert("password: " + this.state.given_password);
     alert(this.state.data);
     var decoded = atob(this.state.data);
-    alert(decoded)
+    alert(decoded);
+    
     var decrypted = AES.decrypt(decoded, this.state.given_password).toString();
+    var decrypted2 = AES.decrypt(atob(decoded), this.state.given_password).toString();
+    alert(decrypted2);
     //debugger;
     this.setState({
         is_encrypted: false,
