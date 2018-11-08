@@ -97,7 +97,7 @@ handleError(err){
     console.error(err)
   }
 handleScan(data){
-   
+    alert(data);
     if(data){
              try {
                 var parsed = JSON.parse(data);
@@ -107,6 +107,8 @@ handleScan(data){
                         this.setState({given_password: parsed.key}, function() {
                             this.decryptQR();
                         });
+                    }else{
+                        alert(valueCheck + " != " + this.state.sha256checksum);
                     }
                 }else{
                    
