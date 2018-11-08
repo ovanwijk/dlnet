@@ -77,11 +77,13 @@ class QRDownloader extends Component {
 
 decryptQR(){
     var decrypted = AES.decrypt(this.state.data, this.state.given_password).toString();
-    debugger;
+    //debugger;
     this.setState({
         is_encrypted: false,
-        data: decrypted
+        data: decrypted,
+        cameraOpen: false
     });
+    //this.setState({cameraOpen:!this.state.cameraOpen});
     this.toggleCamera();
 }
 
@@ -102,7 +104,7 @@ handleScan(data){
                 if(parsed.key && parsed.checksumValue){
                     var valueCheck = SHA256(AES.decrypt(parsed.checksumValue, parsed.key)).toString();
                     if(valueCheck === this.state.sha256checksum){
-                        this.setState({given_password: parsed.key}, () => {
+                        this.setState({given_password: parsed.key}, function() {
                             this.decryptQR();
                         });
                     }
@@ -158,7 +160,7 @@ toggleCamera(){
               }
               <CardFooter>
               {this.state.is_encrypted ? 
-                  <Button onClick={this.downloadQRCode.bind(this)}>Decrypt</Button> : 
+                  <Button onClick={this.decryptQR.bind(this)}>Decrypt</Button> : 
                   <Button onClick={this.downloadQRCode.bind(this)}>Download</Button>
               }
               </CardFooter>
