@@ -19,7 +19,7 @@ class QRDownloader extends Component {
         
        this.state ={
            size: Number(props.match.params.size),
-           data: parsedArg.base64,
+           data: atob(parsedArg.base64),
            name:  props.match.params.name,
            stayopen: props.match.params.stayopen,
            is_encrypted : parsedArg.encrypted,
@@ -76,16 +76,16 @@ class QRDownloader extends Component {
 }
 
 decryptQR(){
-    alert("password: " + this.state.given_password);
-    alert(this.state.data);
-    var decoded = atob(this.state.data);
-    alert(decoded);
+    //alert("password: " + this.state.given_password);
+    //alert(this.state.data);
+    //var decoded = atob();
+    //alert(decoded);
     
-    var decrypted = AES.decrypt(decoded, this.state.given_password).toString(enc.Utf8);
+    var decrypted = AES.decrypt(this.state.data, this.state.given_password).toString(enc.Utf8);
     //var decrypted2 = AES.decrypt(atob(decoded), this.state.given_password).toString();
     //alert(decrypted2);
     //debugger;
-    alert(decrypted);
+    //alert(decrypted);
     this.setState({
         is_encrypted: false,
         data: decrypted,
@@ -162,12 +162,12 @@ toggleCamera(){
 
               <CardBody>
                 <QRCode id="qrcodeCanvas" 
-                    value={atob(this.state.data)} 
+                    value={this.state.data} 
                     size={this.state.size} />
                 <CardText>
-                {this.state.data} 
+               
                     <hr/>
-                    {atob(this.state.data)} 
+                    {this.state.data} 
 
                 </CardText>
                
