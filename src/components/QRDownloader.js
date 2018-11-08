@@ -83,8 +83,10 @@ decryptQR(){
         data: decrypted,
         cameraOpen: false
     });
+    alert(decrypted);
+    alert(atob(decrypted));
     //this.setState({cameraOpen:!this.state.cameraOpen});
-    this.toggleCamera();
+    //this.toggleCamera();
 }
 
 valueChanged(what, event) {
@@ -97,8 +99,9 @@ handleError(err){
     console.error(err)
   }
 handleScan(data){
-    alert(data);
+   
     if(data){
+        alert(data);
              try {
                 var parsed = JSON.parse(data);
                 if(parsed.key && parsed.checksumValue){
@@ -154,6 +157,8 @@ toggleCamera(){
                     value={atob(this.state.data)} 
                     size={this.state.size} />
                 <CardText>
+                {this.state.data} 
+                    <hr/>
                     {atob(this.state.data)} 
 
                 </CardText>
