@@ -111,7 +111,8 @@ handleScan(data){
                     this.setState({given_password: "Not a valid QR code."})
                 }
             } catch (e) {
-               
+                alert(e);
+                alert(data);
                 alert("Error happened, not working");
                
             }
