@@ -100,7 +100,7 @@ handleScan(data){
              try {
                 var parsed = JSON.parse(data);
                 if(parsed.key && parsed.checksumValue){
-                    var valueCheck = SHA256(AES.decrypt(parsed.encrypted_value, parsed.key)).toString();
+                    var valueCheck = SHA256(AES.decrypt(parsed.checksumValue, parsed.key)).toString();
                     if(valueCheck === this.state.sha256checksum){
                         this.setState({given_password: parsed.key}, () => {
                             this.decryptQR();
