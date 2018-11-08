@@ -9,7 +9,7 @@ import {
 import QRCode from 'qrcode.react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCamera } from '@fortawesome/free-solid-svg-icons'
-import {SHA256, AES} from 'crypto-js';
+import {SHA256, AES, enc} from 'crypto-js';
 class QRDownloader extends Component {
     constructor(props){
         super(props);
@@ -81,17 +81,18 @@ decryptQR(){
     var decoded = atob(this.state.data);
     alert(decoded);
     
-    var decrypted = AES.decrypt(decoded, this.state.given_password).toString();
-    var decrypted2 = AES.decrypt(atob(decoded), this.state.given_password).toString();
-    alert(decrypted2);
+    var decrypted = AES.decrypt(decoded, this.state.given_password).toString(enc.Utf8);
+    //var decrypted2 = AES.decrypt(atob(decoded), this.state.given_password).toString();
+    //alert(decrypted2);
     //debugger;
+    alert(decrypted);
     this.setState({
         is_encrypted: false,
         data: decrypted,
         cameraOpen: false
     });
-    alert(decrypted);
-    alert(atob(decrypted));
+   
+   // alert(atob(decrypted));
     //this.setState({cameraOpen:!this.state.cameraOpen});
     //this.toggleCamera();
 }
