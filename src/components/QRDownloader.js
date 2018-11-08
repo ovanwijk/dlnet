@@ -1,25 +1,45 @@
 import React, {Component} from 'react';
+import QrReader from 'react-qr-reader';
 import {
    
     Card,  CardText, CardBody, CardFooter,
-    CardHeader,Button
+    CardHeader,Button, InputGroup, InputGroupAddon, Input,
+    Modal, ModalHeader,ModalFooter, ModalBody
     } from 'reactstrap';
 import QRCode from 'qrcode.react';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCamera } from '@fortawesome/free-solid-svg-icons'
+import {SHA256, AES} from 'crypto-js';
 class QRDownloader extends Component {
     constructor(props){
         super(props);
+
+        var parsedArg = JSON.parse(atob(props.match.params.base64));
+        
+        
        this.state ={
            size: Number(props.match.params.size),
-           data: atob(props.match.params.base64),
+           data: parsedArg.base64,
            name:  props.match.params.name,
            stayopen: props.match.params.stayopen,
-           downloaded: false
+           is_encrypted : parsedArg.encrypted,
+           sha256checksum: parsedArg.sha256checksum,
+           given_password: "",
+           downloaded: false,
+           cameraOpen: false
        };
   }
 
+  /*
+  {
+      encrypted: true/false,
+
+  }
+
+  */
+
   componentDidMount(){
-    if(this.state.downloaded === false){
+    if(this.state.downloaded === false && this.state.encrypted === false){
         this.downloadQRCode();
         this.setState({downloaded: true})
         if(this.state.stayopen === 0 || this.state.stayopen === "0"){
@@ -55,27 +75,110 @@ class QRDownloader extends Component {
     }
 }
 
+decryptQR(){
+    var decrypted = AES.decrypt(this.state.data, this.state.given_password).toString();
+    debugger;
+    this.setState({
+        is_encrypted: false,
+        data: decrypted
+    });
+    this.toggleCamera();
+}
+
+valueChanged(what, event) {
+    var update = {};
+    update[what] = event.target.value;
+    this.setState(update);
+}
+
+handleError(err){
+    console.error(err)
+  }
+handleScan(data){
+   
+    if(data){
+             try {
+                var parsed = JSON.parse(data);
+                if(parsed.key && parsed.checksumValue){
+                    var valueCheck = SHA256(AES.decrypt(parsed.encrypted_value, parsed.key)).toString();
+                    if(valueCheck === this.state.sha256checksum){
+                        this.setState({given_password: parsed.key}, () => {
+                            this.decryptQR();
+                        });
+                    }
+                }else{
+                   
+                    this.setState({given_password: "Not a valid QR code."})
+                }
+            } catch (e) {
+               
+                alert("Error happened, not working");
+               
+            }
+        }
+      
+  }
+
+toggleCamera(){
+    this.setState({cameraOpen:!this.state.cameraOpen});
+  }
 
     render(){
         return <div style={{display:'flex', textAlign:'center', 
             alignItems:'center', alignContent:'center',
-            justifyContent:'center', width:'100%', height:'100vh'}}><Card>           
+            justifyContent:'center', width:'100%', height:'100vh'}}>
+            <Card style={{minWidth:'300px'}}>           
               <CardHeader>Downloading QR Code: {this.state.name}</CardHeader>
+              {this.state.is_encrypted ? 
+              
+                <CardBody>
+                    <InputGroup>
+                        <InputGroupAddon addonType="prepend">
+                            <Button onClick={this.toggleCamera.bind(this)}>
+                                <FontAwesomeIcon icon={faCamera}/>
+                            </Button>
+                        </InputGroupAddon>
+
+                        <Input placeholder="key" type="password" value={this.state.given_password} 
+                            onChange={this.valueChanged.bind(this, "given_password")}/>
+                    </InputGroup>
+                </CardBody>: 
+
               <CardBody>
                 <QRCode id="qrcodeCanvas" 
-                    value={this.state.data} 
+                    value={atob(this.state.data)} 
                     size={this.state.size} />
                 <CardText>
-                    {this.state.data} 
+                    {atob(this.state.data)} 
 
                 </CardText>
                
               </CardBody>
+              }
               <CardFooter>
+              {this.state.is_encrypted ? 
+                  <Button onClick={this.downloadQRCode.bind(this)}>Decrypt</Button> : 
                   <Button onClick={this.downloadQRCode.bind(this)}>Download</Button>
+              }
               </CardFooter>
             
         </Card>
+        <Modal isOpen={this.state.cameraOpen} centered >
+          <ModalHeader toggle={this.toggleCamera.bind(this)}>Read key</ModalHeader>
+          <ModalBody>
+            <QrReader 
+                    delay={300}
+                    onError={this.handleError.bind(this)}
+                    onScan={this.handleScan.bind(this)}
+                    style={{ width:'100%' }}>
+
+                </QrReader>
+           </ModalBody>
+           <ModalFooter>
+
+           </ModalFooter>
+         
+        </Modal>
         </div>
               
     }
