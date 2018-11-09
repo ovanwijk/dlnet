@@ -1,44 +1,36 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# DLNET
+This is a small project that solves an issue when dealing with QR codes and security related issues when moving them.
 
-## Available Scripts
+More and more projects especially in the crypto space use QR codes for logging in or convey information.
+However! It is usually very difficult without the use of external applications to get a QR code safely from 
+one machine to the other.
 
-In the project directory, you can run:
+The only requirement is that the receiving machine has a camera. Only visual information is used to convey information.
 
-### `npm start`
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+* QR Code AAA contains some information that is generated on device one. Device one can download the QR code and potentially upload it later but device two doesn't have access to this information.
+* Device one generates an a QR code that points to an IPFS hosted application that everything after the pound/hash sign (#). This part will never leave your browser. The part after the HASH sign contains information like the filename and the QR code size.
+* It also contains the AES encrypted information that you want to send to device two and a hashed random number for decryption key validation.
+* Device one creates a second QR code that has the AES key and encrypted random number.
+* Device two now scans QR code one, it gets directed to the IPFS hosted page.
+* The IPFS page will interpret the data and if encrypted will prompt for a key. Device two can now scan QR code two to decrypt the information that was send (and is present in browser history).
+* Once scanned it creates the AAA QR code with the given information and downloads it with the filename provided in the first QR code.
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+Below an example on how to convey a QR code that contains 'Hello world!' in a safe way to any device with only a camera and internet (which is only required to download the page from IPFS).
 
-### `npm test`
+100% decentralized!
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Scan this first: 
 
-### `npm run build`
+![alt text](transfer.png "Transfer QR")
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### When asked scan this following code
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+![alt text](key.png "Key QR")
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+Now you received your Hello World QR code!
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Add this page to IPFS!
+    ipfs pin QmXLmVTka5YHJpX7vomGEUrhZGDMQXz2RSBNVGinuaXHf2

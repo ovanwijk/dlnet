@@ -15,7 +15,7 @@ const Routees = () => (
             <Route path="/public/:iotaPayReference" component={Public}/>
             <Route path="/public" component={Public}/>
             <Route path="/:iotaPayReference" component={Public}/> */}
-            <Route path="/qr/:name/:size/:stayopen/:base64" component={QRDownloader}/>
+            <Route path="/qr/:name/:size/:stayopen/:data" component={QRDownloader}/>
             <Route path="/" component={App}/>
             
         </Switch>

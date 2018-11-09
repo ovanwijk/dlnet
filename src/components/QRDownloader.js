@@ -7,23 +7,23 @@ import {
     Modal, ModalHeader,ModalFooter, ModalBody
     } from 'reactstrap';
 import QRCode from 'qrcode.react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCamera } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import {SHA256, AES, enc} from 'crypto-js';
 class QRDownloader extends Component {
     constructor(props){
         super(props);
-
-        var parsedArg = JSON.parse(atob(props.match.params.base64));
+        
+        var parsedArg = JSON.parse(decodeURIComponent(props.match.params.data));
         
         
        this.state ={
            size: Number(props.match.params.size),
-           data: atob(parsedArg.base64),
+           data: parsedArg.b,
            name:  props.match.params.name,
            stayopen: props.match.params.stayopen,
-           is_encrypted : parsedArg.encrypted,
-           sha256checksum: parsedArg.sha256checksum,
+           is_encrypted : parsedArg.e,
+           sha256checksum: parsedArg.s,
            given_password: "",
            downloaded: false,
            cameraOpen: false
@@ -41,10 +41,13 @@ class QRDownloader extends Component {
   componentDidMount(){
     if(this.state.downloaded === false && this.state.encrypted === false){
         this.downloadQRCode();
-        this.setState({downloaded: true})
+       
         if(this.state.stayopen === 0 || this.state.stayopen === "0"){
-            window.open('','_parent','');
-            window.close();
+            setTimeout(() => {
+                window.open('','_parent','');
+                window.close();
+            }, 100);
+          
         }
     }
   }
@@ -73,6 +76,7 @@ class QRDownloader extends Component {
     } else if (lnk.fireEvent) {
       lnk.fireEvent("onclick");
     }
+    this.setState({downloaded: true})
 }
 
 decryptQR(){
@@ -90,6 +94,8 @@ decryptQR(){
         is_encrypted: false,
         data: decrypted,
         cameraOpen: false
+    }, () =>{
+        this.downloadQRCode()  
     });
    
    // alert(atob(decrypted));
@@ -109,13 +115,14 @@ handleError(err){
 handleScan(data){
    
     if(data){
-        alert(data);
+        //alert(data);
              try {
                 var parsed = JSON.parse(data);
-                if(parsed.key && parsed.checksumValue){
-                    var valueCheck = SHA256(AES.decrypt(parsed.checksumValue, parsed.key)).toString();
+                debugger;
+                if(parsed.k && parsed.c){
+                    var valueCheck = SHA256(AES.decrypt(parsed.c, parsed.k)).toString();
                     if(valueCheck === this.state.sha256checksum){
-                        this.setState({given_password: parsed.key}, function() {
+                        this.setState({given_password: parsed.k}, function() {
                             this.decryptQR();
                         });
                     }else{
